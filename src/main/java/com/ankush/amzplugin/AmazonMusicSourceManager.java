@@ -6,6 +6,7 @@ import com.ankush.amzplugin.mirror.MirroringAudioTrackResolver;
 import com.github.topi314.lavasearch.AudioSearchManager;
 import com.github.topi314.lavasearch.result.AudioSearchResult;
 import com.github.topi314.lavasearch.result.BasicAudioSearchResult;
+import com.github.topi314.lavasearch.result.AudioText;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
@@ -54,11 +55,11 @@ public class AmazonMusicSourceManager extends MirroringAudioSourceManager implem
 
 	@Override public AudioSearchResult loadSearch(String query, Set<AudioSearchResult.Type> types) {
 		if (!query.startsWith(SEARCH_PREFIX)) return null;
-		if (types.isEmpty()) types = SEARCH_TYPES;
+		if (types.isEmpty()) types = Set.copyOf(SEARCH_TYPES);
 		if (!types.contains(AudioSearchResult.Type.TRACK)) return null;
 		try {
 			var tracks = searchTracks(query.substring(SEARCH_PREFIX.length()).trim());
-			return tracks.isEmpty() ? null : new BasicAudioSearchResult(tracks, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+			return tracks.isEmpty() ? null : new BasicAudioSearchResult(tracks, new ArrayList<AudioPlaylist>(), new ArrayList<AudioPlaylist>(), new ArrayList<AudioPlaylist>(), new ArrayList<AudioText>());
 		} catch (Exception e) { log.error("Amazon Music search failed", e); return null; }
 	}
 
