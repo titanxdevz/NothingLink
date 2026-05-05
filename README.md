@@ -94,7 +94,7 @@ cd NothingLink
 ./gradlew :plugin:build
 ```
 
-Output: `plugin/build/libs/amazonmusic-plugin-1.0.0.jar`
+Output: `plugin/build/libs/amazonmusic-plugin-1.0.3.jar`
 
 ---
 
