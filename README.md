@@ -25,7 +25,7 @@ Add to your Lavalink `application.yml`:
 ```yaml
 lavalink:
     plugins:
-        - dependency: com.github.Ankush26030:NothingLink:v1.0.0
+        - dependency: com.github.Ankush26030:NothingLink:v1.0.3
           repository: https://jitpack.io
 ```
 
