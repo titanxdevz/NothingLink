@@ -1,6 +1,6 @@
 # 🎵 NothingLink
 
-A standalone **Amazon Music** source plugin for [Lavalink](https://github.com/lavalink-devs/Lavalink).
+A multi-source audio plugin for [Lavalink](https://github.com/lavalink-devs/Lavalink) — supports **Amazon Music**, **Instagram**, and **Pandora**.
 
 Designed to work seamlessly alongside existing plugins like [LavaSrc](https://github.com/topi314/LavaSrc) with **zero conflicts**.
 
@@ -8,13 +8,23 @@ Designed to work seamlessly alongside existing plugins like [LavaSrc](https://gi
 
 ## ✨ Features
 
-- 🔍 **Search** — Search Amazon Music tracks
-- 🎶 **Tracks** — Play individual tracks via URL
-- 💿 **Albums** — Load full albums
-- 👤 **Artists** — Load artist top songs
-- 📋 **Playlists** — Load playlists, community playlists & user playlists
-- 🔗 **LavaSearch** — Full search integration support
-- ⚡ **Conflict-Free** — Works alongside LavaSrc and all other Lavalink plugins
+### 🎧 Amazon Music
+- 🔍 Search tracks via `amzsearch:` prefix
+- 🎶 Play individual tracks, albums, artists & playlists via URL
+- 📋 Community playlists & user playlists supported
+- 🔗 Full LavaSearch integration
+
+### 📸 Instagram
+- 🎬 Play audio from Reels, Posts & Audio pages
+- 🔄 Auto session management (no login required)
+- ⏳ CDN URL auto-refresh on expiry
+
+### 🎵 Pandora
+- 🔍 Search tracks via `pdsearch:` prefix
+- 🎶 Play tracks, albums, artists & playlists via URL
+- 👤 Artist "All Songs" supported
+- 💡 Recommendations via `pdrec:` prefix
+- 🔁 ISRC-based mirroring (plays via YouTube fallback)
 
 ---
 
@@ -25,13 +35,17 @@ Add to your Lavalink `application.yml`:
 ```yaml
 lavalink:
     plugins:
-        - dependency: com.github.Ankush26030:NothingLink:v1.0.3
+        - dependency: com.github.Ankush26030:NothingLink:v1.0.4
           repository: https://jitpack.io
 ```
 
 ---
 
 ## ⚙️ Configuration
+
+Add the following under `plugins:` in your `application.yml`:
+
+### Amazon Music
 
 ```yaml
 plugins:
@@ -49,10 +63,70 @@ plugins:
 | `searchLimit` | integer | `10` | Max search results (1-10) |
 | `providers` | string[] | YouTube search | Audio resolution providers |
 
+### Instagram
+
+```yaml
+plugins:
+    instagram:
+        enabled: true
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enabled` | boolean | `false` | Enable/disable Instagram source |
+
+### Pandora
+
+```yaml
+plugins:
+    pandora:
+        enabled: true
+        tokenApiUrl: "https://get.1lucas1apk.fun/pandora/gettoken"
+        csrfToken: ""
+        preferTokenApi: true
+        searchLimit: 6
+        providers:
+            - "ytsearch:\"%ISRC%\""
+            - "ytsearch:%QUERY%"
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enabled` | boolean | `false` | Enable/disable Pandora source |
+| `tokenApiUrl` | string | `""` | External token API endpoint |
+| `csrfToken` | string | `""` | Manual CSRF token (optional) |
+| `preferTokenApi` | boolean | `true` | Try external token API first |
+| `searchLimit` | integer | `6` | Max search results |
+| `providers` | string[] | YouTube search | Audio resolution providers |
+
+### Full Example
+
+```yaml
+plugins:
+    amazonmusic:
+        enabled: true
+        searchLimit: 10
+        providers:
+            - "ytsearch:\"%ISRC%\""
+            - "ytsearch:%QUERY%"
+    instagram:
+        enabled: true
+    pandora:
+        enabled: true
+        tokenApiUrl: "https://get.1lucas1apk.fun/pandora/gettoken"
+        csrfToken: ""
+        preferTokenApi: true
+        searchLimit: 6
+        providers:
+            - "ytsearch:\"%ISRC%\""
+            - "ytsearch:%QUERY%"
+```
+
 ---
 
-## 🔗 Supported URLs
+## 🔗 Supported URLs & Prefixes
 
+### Amazon Music
 ```
 https://music.amazon.com/tracks/B0XXXXX
 https://music.amazon.com/albums/B0XXXXX
@@ -61,12 +135,24 @@ https://music.amazon.com/playlists/B0XXXXX
 https://music.amazon.com/community-playlists/B0XXXXX
 https://music.amazon.com/user-playlists/B0XXXXX
 ```
+Search: `amzsearch:Shape of You`
 
-### Search Prefix
+### Instagram
+```
+https://www.instagram.com/reel/XXXXXXXXX/
+https://www.instagram.com/p/XXXXXXXXX/
+https://www.instagram.com/reels/audio/XXXXXXXXX/
+```
 
+### Pandora
 ```
-amzsearch:Shape of You
+https://www.pandora.com/artist/artist-name/song-name/TRXXXXX
+https://www.pandora.com/artist/artist-name/album-name/ALXXXXX
+https://www.pandora.com/artist/artist-name/ARXXXXX
+https://www.pandora.com/playlist/PL:XXXXX
 ```
+Search: `pdsearch:Shape of You`
+Recommendations: `pdrec:TRXXXXX`
 
 ---
 
@@ -81,6 +167,8 @@ Works with all standard Lavalink plugins:
 | YouTube Source | ✅ |
 | SponsorBlock | ✅ |
 | LavaDSPX | ✅ |
+| Dunctebot | ✅ |
+| Gaana Plugin | ✅ |
 
 ---
 
@@ -91,13 +179,15 @@ Requires **Java 21+**
 ```bash
 git clone https://github.com/Ankush26030/NothingLink.git
 cd NothingLink
-./gradlew :plugin:build
+./gradlew clean build
 ```
 
-Output: `plugin/build/libs/amazonmusic-plugin-1.0.3.jar`
+Output: `build/libs/NothingLink-1.0.4.jar`
 
 ---
 
 ## 📄 License
 
-MIT
+**All Rights Reserved** — See [LICENSE](LICENSE) for details.
+
+You may **use** this plugin with Lavalink. You may **not** copy, modify, or redistribute the source code.
