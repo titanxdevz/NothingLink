@@ -35,7 +35,7 @@ Add to your Lavalink `application.yml`:
 ```yaml
 lavalink:
     plugins:
-        - dependency: com.github.Ankush26030:NothingLink:v1.0.4
+        - dependency: com.github.Ankush26030:NothingLink:v1.0.5
           repository: https://jitpack.io
 ```
 
@@ -99,6 +99,20 @@ plugins:
 | `searchLimit` | integer | `6` | Max search results |
 | `providers` | string[] | YouTube search | Audio resolution providers |
 
+### Discord Webhook Logger
+
+```yaml
+plugins:
+    nothinglink:
+        webhookEnabled: true
+        webhookUrl: "YOUR_DISCORD_WEBHOOK_URL"
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `webhookEnabled` | boolean | `false` | Enable/disable Discord webhook logs |
+| `webhookUrl` | string | `""` | Discord webhook URL |
+
 ### Full Example
 
 ```yaml
@@ -120,6 +134,9 @@ plugins:
         providers:
             - "ytsearch:\"%ISRC%\""
             - "ytsearch:%QUERY%"
+    nothinglink:
+        webhookEnabled: true
+        webhookUrl: "YOUR_DISCORD_WEBHOOK_URL"
 ```
 
 ---
@@ -182,7 +199,7 @@ cd NothingLink
 ./gradlew clean build
 ```
 
-Output: `build/libs/NothingLink-1.0.4.jar`
+Output: `build/libs/NothingLink-1.0.5.jar`
 
 ---
 
