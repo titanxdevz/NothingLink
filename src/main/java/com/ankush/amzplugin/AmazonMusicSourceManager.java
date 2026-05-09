@@ -9,7 +9,7 @@ import com.github.topi314.lavasearch.result.BasicAudioSearchResult;
 import com.github.topi314.lavasearch.result.AudioText;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
+
 import com.sedmelluq.discord.lavaplayer.track.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -27,7 +27,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class AmazonMusicSourceManager extends MirroringAudioSourceManager implements HttpConfigurable, AudioSearchManager {
+public class AmazonMusicSourceManager extends MirroringAudioSourceManager implements AudioSearchManager {
 	private static final Logger log = LoggerFactory.getLogger(AmazonMusicSourceManager.class);
 	public static final Pattern URL_PATTERN = Pattern.compile("https?://(?:www\\.)?music\\.amazon\\.[a-z.]+/(?<type>tracks|albums|artists|playlists|community-playlists|user-playlists)/(?<id>[A-Za-z0-9]+)(?:/[^?#]*)?(?:\\?.*)?", Pattern.CASE_INSENSITIVE);
 	public static final String SEARCH_PREFIX = "amzsearch:";

@@ -8,13 +8,12 @@ import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.tools.io.SeekableInputStream;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class MirroringAudioTrack extends ExtendedAudioTrack {
-	private static final Logger log = LoggerFactory.getLogger(MirroringAudioTrack.class);
+
 	protected final MirroringAudioSourceManager sourceManager;
 
 	public MirroringAudioTrack(AudioTrackInfo trackInfo, String albumName, String albumUrl, String artistUrl, String artistArtworkUrl, String previewUrl, boolean isPreview, MirroringAudioSourceManager sourceManager) {
