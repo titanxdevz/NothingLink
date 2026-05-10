@@ -37,6 +37,7 @@ public class AmazonMusicSourceManager extends MirroringAudioSourceManager implem
 	private static final int FAILURE_CACHE_CLEANUP_THRESHOLD = 256;
 	private int searchLimit = 10;
 	private final Map<String, Long> recentFailures = new ConcurrentHashMap<>();
+	private com.ankush.amzplugin.plugin.DiscordWebhookLogger webhook;
 
 	public AmazonMusicSourceManager(String[] providers, AudioPlayerManager apm) { this(providers, unused -> apm); }
 	public AmazonMusicSourceManager(String[] providers, Function<Void, AudioPlayerManager> apm) { this(apm, new DefaultMirroringAudioTrackResolver(providers)); }
@@ -46,6 +47,7 @@ public class AmazonMusicSourceManager extends MirroringAudioSourceManager implem
 	}
 
 	public void setSearchLimit(int sl) { this.searchLimit = sl; }
+	public void setWebhook(com.ankush.amzplugin.plugin.DiscordWebhookLogger webhook) { this.webhook = webhook; }
 	@Override public String getSourceName() { return "amazonmusic"; }
 
 	@Override public AudioTrack decodeTrack(AudioTrackInfo ti, DataInput input) throws IOException {
@@ -59,8 +61,13 @@ public class AmazonMusicSourceManager extends MirroringAudioSourceManager implem
 		if (!types.contains(AudioSearchResult.Type.TRACK)) return null;
 		try {
 			var tracks = searchTracks(query.substring(SEARCH_PREFIX.length()).trim());
+			if (webhook != null) webhook.logSearch(query, getSourceName(), tracks.size());
 			return tracks.isEmpty() ? null : new BasicAudioSearchResult(tracks, new ArrayList<AudioPlaylist>(), new ArrayList<AudioPlaylist>(), new ArrayList<AudioPlaylist>(), new ArrayList<AudioText>());
-		} catch (Exception e) { log.error("Amazon Music search failed", e); return null; }
+		} catch (Exception e) { 
+			log.error("Amazon Music search failed", e); 
+			if (webhook != null) webhook.logLoadFailed(query, getSourceName(), e.getMessage());
+			return null; 
+		}
 	}
 
 	@Override public AudioItem loadItem(AudioPlayerManager manager, AudioReference reference) {

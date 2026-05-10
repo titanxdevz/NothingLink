@@ -31,6 +31,7 @@ public class PandoraProvider extends MirroringAudioSourceManager {
 
     private final PandoraClient client;
     private final int maxResults;
+    private com.ankush.amzplugin.plugin.DiscordWebhookLogger webhook;
 
     public PandoraProvider(String[] providers, String tokenUrl, String csrf, boolean extFirst, int limit,
                            Function<Void, AudioPlayerManager> apm) {
@@ -40,6 +41,7 @@ public class PandoraProvider extends MirroringAudioSourceManager {
     }
 
     @Override public String getSourceName() { return SRC; }
+    public void setWebhook(com.ankush.amzplugin.plugin.DiscordWebhookLogger webhook) { this.webhook = webhook; }
     @Override public AudioPlayerManager getAudioPlayerManager() { return audioPlayerManager.apply(null); }
 
     @Override
@@ -57,7 +59,10 @@ public class PandoraProvider extends MirroringAudioSourceManager {
             if (eid.startsWith("AR")) return id.contains("/artist/all-songs/") ? doArtistAll(eid) : doArtist(eid);
             if (eid.startsWith("PL:")) return doPlaylist(eid);
             return null;
-        } catch (IOException e) { throw new FriendlyException("Pandora load error", FriendlyException.Severity.SUSPICIOUS, e); }
+        } catch (IOException e) { 
+            if (webhook != null) webhook.logLoadFailed(id, getSourceName(), e.getMessage());
+            throw new FriendlyException("Pandora load error", FriendlyException.Severity.SUSPICIOUS, e); 
+        }
     }
 
     // ── loaders ─────────────────────────────────────────────────────────────
@@ -74,6 +79,7 @@ public class PandoraProvider extends MirroringAudioSourceManager {
             JsonNode item = ann.get(rid); if (item == null || !"TR".equals(txt(item, "type"))) continue;
             AudioTrack t = buildTrack(item, ann); if (t != null) out.add(t);
         }
+        if (webhook != null) webhook.logSearch(query, getSourceName(), out.size());
         return out.isEmpty() ? AudioReference.NO_TRACK :
                 new PandoraCollection("Pandora Search: " + query, out, ExtendedAudioPlaylist.Type.PLAYLIST, null, null, null, out.size());
     }
@@ -158,6 +164,7 @@ public class PandoraProvider extends MirroringAudioSourceManager {
         List<String> ids = new ArrayList<>(); for (JsonNode v : sim) { String s = v.asText(null); if (s != null) ids.add(s); }
         JsonNode ann = client.annotate(ids);
         List<AudioTrack> tracks = new ArrayList<>(); for (String id : ids) { JsonNode n = ann.get(id); if (n != null) { AudioTrack t = buildTrack(n, ann); if (t != null) tracks.add(t); } }
+        if (webhook != null) webhook.logSearch("Recommendations for: " + tid, getSourceName(), tracks.size());
         return new PandoraCollection("Pandora Recommendations", tracks, ExtendedAudioPlaylist.Type.RECOMMENDATIONS, null, null, null, tracks.size());
     }
 

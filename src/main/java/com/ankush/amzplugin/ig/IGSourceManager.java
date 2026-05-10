@@ -29,6 +29,7 @@ public class IGSourceManager implements AudioSourceManager {
 
     private final IGMediaResolver resolver;
     private final HttpInterfaceManager httpManager;
+    private com.ankush.amzplugin.plugin.DiscordWebhookLogger webhook;
 
     public IGSourceManager() {
         this.resolver = new IGMediaResolver();
@@ -39,6 +40,8 @@ public class IGSourceManager implements AudioSourceManager {
     public String getSourceName() { return "instagram"; }
 
     public IGMediaResolver getResolver() { return resolver; }
+
+    public void setWebhook(com.ankush.amzplugin.plugin.DiscordWebhookLogger webhook) { this.webhook = webhook; }
 
     public HttpInterface getHttpInterface() { return httpManager.getInterface(); }
 
@@ -51,6 +54,7 @@ public class IGSourceManager implements AudioSourceManager {
             if ((m = RE_POST.matcher(id)).find())  return fromPost(id, m.group(1), "p");
             if ((m = RE_REEL.matcher(id)).find())   return fromPost(id, m.group(1), "reel");
         } catch (Exception e) {
+            if (webhook != null) webhook.logLoadFailed(id, getSourceName(), e.getMessage());
             throw new FriendlyException("Instagram load failed", FriendlyException.Severity.SUSPICIOUS, e);
         }
         return null;
